@@ -22,12 +22,11 @@ class MoviesController < ApplicationController
     
     if params[:sort_type] != nil
       session[:sort_type] = params[:sort_type]
-      filtered
     else if params[:ratings] != nil
       session[:ratings] = params[:ratings]
+    end
+    end
       filtered
-    end
-    end
       @filtered_ratings = session[:ratings] || @all_ratings
   end
 
@@ -38,6 +37,7 @@ class MoviesController < ApplicationController
   def create
     @movie = Movie.create!(movie_params)
     flash[:notice] = "#{@movie.title} was successfully created."
+    clear_session_ratings_and_sort
     redirect_to movies_path
   end
 
@@ -49,6 +49,7 @@ class MoviesController < ApplicationController
     @movie = Movie.find params[:id]
     @movie.update_attributes!(movie_params)
     flash[:notice] = "#{@movie.title} was successfully updated."
+    clear_session_ratings_and_sort
     redirect_to movie_path(@movie)
   end
 
@@ -56,6 +57,7 @@ class MoviesController < ApplicationController
     @movie = Movie.find(params[:id])
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
+    clear_session_ratings_and_sort
     redirect_to movies_path
   end
   
@@ -79,6 +81,11 @@ class MoviesController < ApplicationController
         hilite
       end
     end
+  end
+  
+  def clear_session_ratings_and_sort
+    session.delete(:ratings)
+    session.delete(:sort_type)
   end
   
   # def sorted
