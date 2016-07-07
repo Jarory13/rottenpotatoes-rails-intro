@@ -1,5 +1,5 @@
 class MoviesController < ApplicationController
-  
+
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
   end
@@ -17,20 +17,20 @@ class MoviesController < ApplicationController
     @titleID = "title_headder"
     @rdID = "release_date_header"
     
-    #sort params if a sort type is provided
+    @filtered_ratings = @all_ratings
+    @movies = Movie.all
+    
     if params[:sort_type] != nil
-    #call hilite functino to select which column recieves the hilite variable. 
-    hilite 
-    #return the sorted movies list. 
-    @movies = Movie.all.order(params[:sort_type])
+      sorted
+      @filtered_ratings = []
+    else if params[:ratings] != nil
+      @filtered_ratings = params[:ratings]
+      filtered
     else
-      @movies = Movie.all
+      
+    end
     end
     
-    if params[:ratings] != nil
-      filter = params[:ratings].keys
-      @movies = Movie.where({ rating: filter})
-    end
   end
 
   def new
@@ -65,9 +65,26 @@ class MoviesController < ApplicationController
   def hilite
     if params[:sort_type] == "title"
       @titleclass= "hilite"
-    else
+    else if params[:sort_type] == "release_date"
       @RDclass = "hilite"
     end
+    end
+  end
+  
+  
+  #method to filter based on selected checkbox ratings
+  def filtered
+    if params[:ratings] != nil
+      @filter = params[:ratings].keys
+      @movies = @movies.where({rating: @filter})
+    end
+  end
+  
+  def sorted
+    #call highlight function
+    hilite 
+    #return the sorted movies list. 
+    @movies = @movies.order(params[:sort_type])
   end
   
 end
