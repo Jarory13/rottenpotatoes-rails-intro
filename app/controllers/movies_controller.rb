@@ -17,20 +17,18 @@ class MoviesController < ApplicationController
     @titleID = "title_headder"
     @rdID = "release_date_header"
     
-    @filtered_ratings = @all_ratings
     @movies = Movie.all
+
     
     if params[:sort_type] != nil
-      sorted
-      @filtered_ratings = []
-    else if params[:ratings] != nil
-      @filtered_ratings = params[:ratings]
+      session[:sort_type] = params[:sort_type]
       filtered
-    else
-      
+    else if params[:ratings] != nil
+      session[:ratings] = params[:ratings]
+      filtered
     end
     end
-    
+      @filtered_ratings = session[:ratings] || @all_ratings
   end
 
   def new
@@ -63,9 +61,9 @@ class MoviesController < ApplicationController
   
   #find which symbol should be hilighted  
   def hilite
-    if params[:sort_type] == "title"
+    if session[:sort_type] == "title"
       @titleclass= "hilite"
-    else if params[:sort_type] == "release_date"
+    else if session[:sort_type] == "release_date"
       @RDclass = "hilite"
     end
     end
@@ -74,17 +72,21 @@ class MoviesController < ApplicationController
   
   #method to filter based on selected checkbox ratings
   def filtered
-    if params[:ratings] != nil
-      @filter = params[:ratings].keys
-      @movies = @movies.where({rating: @filter})
+    if session[:ratings] != nil
+      @filter = session[:ratings].keys
+      @movies = @movies.where({rating: @filter}).order(session[:sort_type])
+      if session[:sort_type] !=nil
+        hilite
+      end
     end
   end
   
-  def sorted
-    #call highlight function
-    hilite 
-    #return the sorted movies list. 
-    @movies = @movies.order(params[:sort_type])
-  end
+  # def sorted
+  #   #call highlight function
+  #   hilite 
+  #   filtered
+  #   #return the sorted movies list. 
+  #   @movies = @movies.order(session[:sort_type])
+  # end
   
 end
