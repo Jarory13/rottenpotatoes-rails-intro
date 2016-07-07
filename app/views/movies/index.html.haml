@@ -4,9 +4,10 @@
 %table#movies
   %thead
     %tr
-      %th Movie Title
+      -# I couldn't figure out how to us the %th#ID and also the {:class => var} so I packed them into one. 
+      %th{:class => @titleclass, :id =>@titleID}= link_to "Movie Title", movies_path({:sort_type => :title})
       %th Rating
-      %th Release Date
+      %th{:class => @RDclass, :id =>@rdID}= link_to "Release Date", movies_path({:sort_type => :release_date})
       %th More Info
   %tbody
     - @movies.each do |movie|

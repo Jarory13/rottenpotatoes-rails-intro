@@ -11,7 +11,19 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    #instance variables controlling the ID of the title and release date headers
+    @titleID = "title_headder"
+    @rdID = "release_date_header"
+    
+    #sort params if a sort type is provided
+    if params[:sort_type] != nil
+    #call hilite functino to select which column recieves the hilite variable. 
+    hilite 
+    #return the sorted movies list. 
+    @movies = Movie.all.order(params[:sort_type])
+    else
+      @movies = Movie.all
+    end
   end
 
   def new
@@ -41,5 +53,14 @@ class MoviesController < ApplicationController
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
   end
-
+  
+  #find which symbol should be hilighted  
+  def hilite
+    if params[:sort_type] == "title"
+      @titleclass= "hilite"
+    else
+      @RDclass = "hilite"
+    end
+  end
+  
 end
