@@ -1,5 +1,5 @@
 class MoviesController < ApplicationController
-
+  
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
   end
@@ -11,6 +11,8 @@ class MoviesController < ApplicationController
   end
 
   def index
+    #set the value of all_ratings. Only returns values currently in the database as filters, not all possible values. 
+    @all_ratings = Movie.uniq.pluck(:rating).sort
     #instance variables controlling the ID of the title and release date headers
     @titleID = "title_headder"
     @rdID = "release_date_header"
@@ -23,6 +25,11 @@ class MoviesController < ApplicationController
     @movies = Movie.all.order(params[:sort_type])
     else
       @movies = Movie.all
+    end
+    
+    if params[:ratings] != nil
+      filter = params[:ratings].keys
+      @movies = Movie.where({ rating: filter})
     end
   end
 
