@@ -82,7 +82,7 @@ class MoviesController < ApplicationController
       end
     end
   end
-  
+
   def clear_session_ratings_and_sort
     session.delete(:ratings)
     session.delete(:sort_type)
